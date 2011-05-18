@@ -72,6 +72,7 @@ register_deactivation_hook( __FILE__, 'mf_taxonomy_list_deactivate' );
  *
  * @access     private
  * @since      unknown
+ * @alter      2011-05-18
  */
 function mf_taxonomy_list_css() {
 	if ( defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
@@ -120,9 +121,6 @@ add_filter( 'terms_clauses', 'mf_taxonomy_list_shortcode_terms_clauses', 10, 3 )
  *
  * Print a link to edit a given term.
  *
- * This filter is intended to fire during the 'terms_clauses' hook
- * in the WordPress core function get_terms().
- *
  * @param     stdClass       Term Object.
  * @return    string         HTML anchor element.
  *
@@ -130,15 +128,26 @@ add_filter( 'terms_clauses', 'mf_taxonomy_list_shortcode_terms_clauses', 10, 3 )
  * @since     1.0
  */
 function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
-	if ( ! isset( $term->name ) || ! isset( $term->taxonomy ) || ! isset( $term->taxonomy ) ) {
+	if ( ! isset( $term->taxonomy ) ) {
 		return '';
 	}
-	if ( current_user_can( 'manage_categories' ) ) {
-		$edit_img = WP_PLUGIN_URL . '/' . basename( plugin_dir_path( __FILE__ ) ) . '/edit.png';
-		$href = admin_url( 'edit-tags.php' ) . '?action=edit&amp;taxonomy=' . urlencode( $term->taxonomy ) . '&amp;tag_ID=' . (int) $term->term_id;
-		return '<a class="edit-term" href="' . esc_url( $href ) . '" title="' . sprintf( esc_attr__( 'Edit %1$s', 'taxonomy_list_shortcode' ), $term->name ) . '"><img src="' . esc_url( $edit_img ) . '" alt="' . esc_attr__( 'edit', 'taxonomy_list_shortcode' ) . '" /></a> ';
+
+	$taxonomy = get_taxonomy( $term->taxonomy );
+
+	$cap = '';
+	if ( isset( $taxonomy->cap->edit_terms ) ) {
+		$cap = $taxonomy->cap->edit_terms;
 	}
-	return '';
+
+	if ( ! current_user_can( $cap ) ) {
+		return '';
+	}
+
+	if ( ! isset( $term->term_id ) ) {
+		return '';
+	}
+
+	return '<a class="edit-term" href="' . esc_url( add_query_arg( array( 'action'   => 'edit', 'taxonomy' => $term->taxonomy, 'tag_ID'   => $term->term_id ), admin_url( 'edit-tags.php' ) ) ) . '"><img src="' . esc_url( MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/edit.png' ) . '" alt="' . esc_attr__( 'Edit', 'taxonomy_list_shortcode' ) . '" /></a> ';
 }
 
 
