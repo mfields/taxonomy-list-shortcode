@@ -23,9 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 edit.png is a modified version of gtk-edit.png from the Gnome icons set
 */
 
+
 define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION', '1.2-dev' );
 define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_URL',     plugin_dir_url( __FILE__ ) );
 define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
+
 
 /**
  * Activate.
@@ -40,6 +42,7 @@ function mf_taxonomy_list_activate() {
 }
 register_activation_hook( __FILE__, 'mf_taxonomy_list_activate' );
 
+
 /**
  * Deactivate.
  *
@@ -52,6 +55,7 @@ function mf_taxonomy_list_deactivate() {
 	delete_option( 'mfields_taxonomy_list_shortcode_enable_css' );
 }
 register_deactivation_hook( __FILE__, 'mf_taxonomy_list_deactivate' );
+
 
 /**
  * Get terms having descriptions.
@@ -82,6 +86,7 @@ function mf_taxonomy_list_shortcode_terms_clauses( $pieces, $taxonomies, $args )
 }
 add_filter( 'terms_clauses', 'mf_taxonomy_list_shortcode_terms_clauses', 10, 3 );
 
+
 /**
  * Edit Term Link.
  *
@@ -107,6 +112,7 @@ function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
 	}
 	return '';
 }
+
 
 /**
  * Shortcode.
@@ -227,6 +233,7 @@ EOF;
 }
 add_shortcode( 'taxonomy-list', 'mf_taxonomy_list_shortcode' );
 
+
 /**
  * Paged taxonomy link.
  *
@@ -264,6 +271,7 @@ function mfields_paged_taxonomy_link( $n ) {
 	}
 	return $url;
 }
+
 
 /**
  * Custom Styles
