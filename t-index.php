@@ -1,28 +1,34 @@
 <?php
+/**
+ * Glossary Template.
+ *
+ * Displays taxonomy terms + descriptions in a definition list.
+ *
+ * @since 2011-02-13
+ */
+
+if ( ! defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
+	exit;
+}
 
 /* Split the array into smaller pieces + generate html to display lists. */
 $chunked = array_chunk( $terms, ceil( count( $terms ) / $cols ) );
 
 $o.= "\n\t" . '<div class="mf_taxonomy_list">';
-foreach( $chunked as $k => $column ) {
+foreach ( $chunked as $k => $column ) {
 	$o.= "\n\t" . '<ul class="mf_taxonomy_column mf_cols_' . $cols . '">';
-	foreach( $column as $term ) {
-		$url = esc_url( get_term_link( $term, $term->taxonomy ) );
+	foreach ( $column as $term ) {
+		$url = get_term_link( $term, $term->taxonomy );
 		$count = intval( $term->count );
 		$style = '';
 		$style.= ( $background != 'fff' ) ? ' background:#' . $background . ';' : '';
 		$style.= ( $color != '000' ) ? ' color:#' . $color . ';' : '';
 		$style = ( !empty( $style ) ) ? ' style="' . trim( $style ) . '"' : '';
-		
-		$li_class = ( $show_counts ) ? ' class="has-quantity"' : '';
+
+		$class = ( $show_counts ) ? ' class="has-quantity"' : '';
 		$quantity = ( $show_counts ) ? ' <span' . $style . ' class="quantity">' . $count . '</span>' : '';
-		
-		if ( current_user_can( 'manage_categories' ) ) {
-			$title = 'Edit ' . $term->name;
-			$href = admin_url( 'edit-tags.php' ) . '?action=edit&amp;taxonomy=' . $term->taxonomy . '&amp;tag_ID=' . (int) $term->term_id;
-			$edit = '<a class="edit-term" href="' . esc_url( $href ) . '" title="' . esc_attr( $title ). '"><img src="' . $edit_img . '" alt="edit" /></a> ';
-		}
-		$o.= "\n\t\t" . '<li' . $li_class . $style . '><a' . $style . ' class="term-name" href="' . $url . '">' . $term->name . '</a>' . $edit . '' . $quantity . '</li>';
+
+		$o.= "\n\t\t" . '<li' . $class . $style . '><a' . $style . ' class="term-name" href="' . esc_url( $url ) . '">' . esc_html( $term->name ) . '</a>' . mf_taxonomy_list_shortcode_edit_term_link( $term ) . '' . $quantity . '</li>';
 	}
 	$o.=  "\n\t" . '</ul>';
 }
