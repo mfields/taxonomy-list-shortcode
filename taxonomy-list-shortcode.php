@@ -276,14 +276,20 @@ function mfields_paged_taxonomy_link( $n ) {
 /**
  * Custom Styles
  *
- * Print html style tag with pre-defined styles.
- *
- * @return     void
+ * Adds custom stylesheet to public views.
+ * Users can choose to suppress styles via the custom
+ * setting in the administration panels. Themes can totally
+ * suppress styles by defining a constant named
+ * MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES
+ * in functions.php.
  *
  * @access     private
  * @since      unknown
  */
 function mf_taxonomy_list_css() {
+	if ( defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
+		return;
+	}
 	if ( 0 == (int) get_option( 'mfields_taxonomy_list_shortcode_enable_css' ) ) {
 		return;
 	}
