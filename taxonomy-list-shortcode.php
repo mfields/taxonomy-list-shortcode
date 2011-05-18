@@ -124,7 +124,7 @@ function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
  * @since     0.1
  */
 function mf_taxonomy_list_shortcode( $atts = array() ) {
-	$o = ''; /* "Output" */
+	$o = '';
 	$nav = '';
 	$term_args = array(
 		'pad_counts' => true,
@@ -148,8 +148,15 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 		$cols = 1;
 	}
 
-	/* We need to pass $template to get_terms as well. */
-	if ( isset( $template ) && $template == 'glossary' ) {
+	/*
+	 * Pass the value of $template to get_terms().
+	 * This value will be used to flag glossary requests.
+	 * When a glossary is requested, it is important to only
+	 * display terms that have descriptions. Please see
+	 * mf_taxonomy_list_shortcode_terms_clauses()
+	 * defined in this file.
+	 */
+	if ( 'glossary' == $args['template'] ) {
 		$term_args['taxonomy_list_shortcode_template'] = $template;
 	}
 
@@ -216,7 +223,7 @@ EOF;
 	$terms = get_terms( $tax, $term_args );
 
 	/* Include template. */
-	if ( is_array( $terms ) && count( $terms ) > 0 ) {
+	if ( is_array( $terms ) && ! empty( $terms ) ) {
 		switch( $template ) {
 			case 'glossary' :
 				include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . 't-glossary.php';
