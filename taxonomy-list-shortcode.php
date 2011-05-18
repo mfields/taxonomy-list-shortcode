@@ -23,10 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 edit.png is a modified version of gtk-edit.png from the Gnome icons set
 */
 
-/**
- * The directory in which this plugin is installed.
- */
-define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR', dirname( __FILE__ ) . '/' );
+define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION', '1.2-dev' );
+define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_URL',     plugin_dir_url( __FILE__ ) );
+define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
 
 /**
  * Activate.
@@ -277,83 +276,12 @@ function mfields_paged_taxonomy_link( $n ) {
  * @since      unknown
  */
 function mf_taxonomy_list_css() {
-	if ( 0 < (int) get_option( 'mfields_taxonomy_list_shortcode_enable_css' ) ) {
-		$o = <<<EOF
-	<style type="text/css">
-	html>body .entry ul.mf_taxonomy_column { /* Reset for the Default Theme. */
-		margin: 0px;
-		padding: 0px;
-		list-style-type: none;
-		padding-left: 0px;
-		text-indent: 0px;
+	if ( 0 == (int) get_option( 'mfields_taxonomy_list_shortcode_enable_css' ) ) {
+		return;
 	}
-	ul.mf_taxonomy_column,
-	.entry ul.mf_taxonomy_column {
-		float: left;
-		margin: 0;
-		padding: 0 0 1em;
-		list-style-type: none;
-		list-style-position: outside;
-	}
-	.mf_cols_1{ width:99%; }
-	.mf_cols_2{ width:49.5%; }
-	.mf_cols_3{ width:33%; }
-	.mf_cols_4{ width:24.75%; }
-	.mf_cols_5{ width:19.77%; }
-	.entry ul.mf_taxonomy_column li:before {
-		content: "";
-	}
-	.mf_taxonomy_column li,
-	.entry ul.mf_taxonomy_column li {
-		list-style: none, outside;
-		position: relative;
-		height: 1.5em;
-		z-index: 0;
-		background: #fff;
-		margin: 0 1em .4em 0;
-	}
-	.mf_taxonomy_column li.has-quantity,
-	.entry ul.mf_taxonomy_column li.has-quantity {
-		border-bottom: 1px dotted #888;
-	}
-	.mf_taxonomy_column a.edit-term {
-		height: 16px;
-		width: 16px;
-		display: block;
-	}
-	.logged-in .mf_taxonomy_column a.term-name {
-		left: 16px;
-		padding-left: 4px;
-	}
-	.mf_taxonomy_column a.edit-term,
-	.mf_taxonomy_column a.term-name,
-	.mf_taxonomy_column .quantity {
-		position:absolute;
-		bottom: -0.2em;
-		line-height: 1em;
-		background: #fff;
-		z-index:10;
-	}
-	.mf_taxonomy_column a.term-name {
-		display: block;
-		left:0;
-		padding-right: 0.3em;
-		text-decoration: none;
-	}
-	.mf_taxonomy_column .quantity {
-		display: block;
-		right:0;
-		padding-left: 0.3em;
-	}
-	.mf_taxonomy_list .clear {
-		clear:both;
-	}
-	</style>
-EOF;
-	print '<!-- mf-taxonomy-list -->' . "\n" . preg_replace( '/\s+/', ' ', $o );
-	}
+	wp_enqueue_style( 'taxonomy-list-shortcode', MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
 }
-add_action( 'wp_head', 'mf_taxonomy_list_css' );
+add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
 
 include_once( 'taxonomy-administration-panel.php' );
 

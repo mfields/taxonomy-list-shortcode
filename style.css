@@ -1,0 +1,68 @@
+html>body .entry ul.mf_taxonomy_column { /* Reset for the Default Theme. */
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
+	padding-left: 0px;
+	text-indent: 0px;
+}
+ul.mf_taxonomy_column,
+.entry ul.mf_taxonomy_column {
+	float: left;
+	margin: 0;
+	padding: 0 0 1em;
+	list-style-type: none;
+	list-style-position: outside;
+}
+.mf_cols_1{ width:99%; }
+.mf_cols_2{ width:49.5%; }
+.mf_cols_3{ width:33%; }
+.mf_cols_4{ width:24.75%; }
+.mf_cols_5{ width:19.77%; }
+.entry ul.mf_taxonomy_column li:before {
+	content: "";
+}
+.mf_taxonomy_column li,
+.entry ul.mf_taxonomy_column li {
+	list-style: none, outside;
+	position: relative;
+	height: 1.5em;
+	z-index: 0;
+	background: #fff;
+	margin: 0 1em .4em 0;
+}
+.mf_taxonomy_column li.has-quantity,
+.entry ul.mf_taxonomy_column li.has-quantity {
+	border-bottom: 1px dotted #888;
+}
+.mf_taxonomy_column a.edit-term {
+	height: 16px;
+	width: 16px;
+	display: block;
+}
+.logged-in .mf_taxonomy_column a.term-name {
+	left: 16px;
+	padding-left: 4px;
+}
+.mf_taxonomy_column a.edit-term,
+.mf_taxonomy_column a.term-name,
+.mf_taxonomy_column .quantity {
+	position:absolute;
+	bottom: -0.2em;
+	line-height: 1em;
+	background: #fff;
+	z-index:10;
+}
+.mf_taxonomy_column a.term-name {
+	display: block;
+	left:0;
+	padding-right: 0.3em;
+	text-decoration: none;
+}
+.mf_taxonomy_column .quantity {
+	display: block;
+	right:0;
+	padding-left: 0.3em;
+}
+.mf_taxonomy_list .clear {
+	clear:both;
+}
