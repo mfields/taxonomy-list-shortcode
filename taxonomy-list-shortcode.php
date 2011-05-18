@@ -29,6 +29,9 @@ define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_URL',     plugin_dir_url( __FILE__ ) );
 define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
 
 
+include_once( 'taxonomy-administration-panel.php' );
+
+
 /**
  * Activate.
  *
@@ -55,6 +58,31 @@ function mf_taxonomy_list_deactivate() {
 	delete_option( 'mfields_taxonomy_list_shortcode_enable_css' );
 }
 register_deactivation_hook( __FILE__, 'mf_taxonomy_list_deactivate' );
+
+
+/**
+ * Custom Styles
+ *
+ * Adds custom stylesheet to public views.
+ * Users can choose to suppress styles via the custom
+ * setting in the administration panels. Themes can totally
+ * suppress styles by defining a constant named
+ * MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES
+ * in functions.php.
+ *
+ * @access     private
+ * @since      unknown
+ */
+function mf_taxonomy_list_css() {
+	if ( defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
+		return;
+	}
+	if ( 0 == (int) get_option( 'mfields_taxonomy_list_shortcode_enable_css' ) ) {
+		return;
+	}
+	wp_enqueue_style( 'taxonomy-list-shortcode', MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
+}
+add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
 
 
 /**
@@ -272,32 +300,6 @@ function mfields_paged_taxonomy_link( $n ) {
 	return $url;
 }
 
-
-/**
- * Custom Styles
- *
- * Adds custom stylesheet to public views.
- * Users can choose to suppress styles via the custom
- * setting in the administration panels. Themes can totally
- * suppress styles by defining a constant named
- * MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES
- * in functions.php.
- *
- * @access     private
- * @since      unknown
- */
-function mf_taxonomy_list_css() {
-	if ( defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
-		return;
-	}
-	if ( 0 == (int) get_option( 'mfields_taxonomy_list_shortcode_enable_css' ) ) {
-		return;
-	}
-	wp_enqueue_style( 'taxonomy-list-shortcode', MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
-}
-add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
-
-include_once( 'taxonomy-administration-panel.php' );
 
 function mfields_taxonomy_list_shortcode_admin_section() {
 
