@@ -29,46 +29,12 @@ define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_URL',     plugin_dir_url( __FILE__ ) );
 define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
 
 
-include_once( 'taxonomy-administration-panel.php' );
-
-
-/**
- * Activate.
- *
- * Called when user activates this plugin.
- * Adds a custom setting to the options table.
- *
- * @return    void
- */
-function mf_taxonomy_list_activate() {
-	add_option( 'mfields_taxonomy_list_shortcode_enable_css', 1 );
-}
-register_activation_hook( __FILE__, 'mf_taxonomy_list_activate' );
-
-
-/**
- * Deactivate.
- *
- * Called when user deactivates this plugin.
- * Deletes custom settings from the options table.
- *
- * @return    void
- */
-function mf_taxonomy_list_deactivate() {
-	delete_option( 'mfields_taxonomy_list_shortcode_enable_css' );
-}
-register_deactivation_hook( __FILE__, 'mf_taxonomy_list_deactivate' );
-
-
 /**
  * Custom Styles
  *
  * Adds custom stylesheet to public views.
- * Users can choose to suppress styles via the custom
- * setting in the administration panels. Themes can totally
- * suppress styles by defining a constant named
- * MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES
- * in functions.php.
+ * Themes can suppress styles by defining a constant named
+ * MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES in functions.php.
  *
  * @access     private
  * @since      unknown
@@ -76,9 +42,6 @@ register_deactivation_hook( __FILE__, 'mf_taxonomy_list_deactivate' );
  */
 function mf_taxonomy_list_css() {
 	if ( defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
-		return;
-	}
-	if ( 0 == (int) get_option( 'mfields_taxonomy_list_shortcode_enable_css' ) ) {
 		return;
 	}
 	wp_enqueue_style( 'taxonomy-list-shortcode', MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
@@ -308,27 +271,3 @@ function mfields_paged_taxonomy_link( $n ) {
 	}
 	return $url;
 }
-
-
-function mfields_taxonomy_list_shortcode_admin_section() {
-
-	/* Process the Form */
-	if ( isset( $_POST['mfields_taxonomy_list_shortcode_submit'] ) ) {
-		$css = ( isset( $_POST['mfields_taxonomy_list_shortcode_enable_css'] ) ) ? 1 : 0;
-		$css_human = ( $css ) ? 'true' : 'false';
-		$updated = update_option( 'mfields_taxonomy_list_shortcode_enable_css', $css );
-	}
-
-	$checked = checked( '1', get_option( 'mfields_taxonomy_list_shortcode_enable_css' ), false );
-
-	print <<<EOF
-		<div class="mfields-taxonomy-plugin">
-		<h3>Taxonomy List Shortcode</h3>
-		<form action="" method="post">
-			<p><label for="mfields_taxonomy_list_shortcode_enable_css"><input name="mfields_taxonomy_list_shortcode_enable_css" type="checkbox" id="mfields_taxonomy_list_shortcode_enable_css" value="1"{$checked} /> Enable CSS</label></p>
-			<input class="button" type="submit" name="mfields_taxonomy_list_shortcode_submit" value="Update Settings">
-		</form>
-		</div>
-EOF;
-}
-add_action( 'mfields_taxonomy_administration_panel', 'mfields_taxonomy_list_shortcode_admin_section' );
