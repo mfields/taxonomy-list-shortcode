@@ -52,7 +52,7 @@ add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
 /**
  * Get terms having descriptions.
  *
- * Only query for terms with descriptions when glossary
+ * Only query for terms with descriptions when definition-list
  * template is used.
  *
  * This filter is intended to fire during the 'terms_clauses' hook
@@ -169,13 +169,13 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 
 	/*
 	 * Pass a custom value of 'taxonomy_list_has_description' get_terms().
-	 * This value will be used to flag glossary requests.
-	 * When a glossary is requested, it is important to only
+	 * This value will be used to flag definition-list requests.
+	 * When a definition-list is requested, it is important to only
 	 * display terms that have descriptions. Please see
 	 * mf_taxonomy_list_shortcode_terms_clauses()
 	 * defined in this file.
 	 */
-	if ( 'glossary' == $args['template'] ) {
+	if ( 'definition-list' == $args['template'] ) {
 		$term_args['taxonomy_list_has_description'] = true;
 	}
 
@@ -213,7 +213,7 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	$total = count( $terms );
 
 	/* Include template. */
-	if ( in_array( $args['template'], array( 'index', 'glossary', 'gallery' ) ) ) {
+	if ( in_array( $args['template'], array( 'index', 'definition-list', 'gallery' ) ) ) {
 		$template_name = 'taxonomy-list-shortcode-' . $args['template'] . '.php';
 		$template = locate_template( $template_name );
 		if ( ! empty( $template ) ) {
