@@ -28,11 +28,6 @@ $count = 0;
 foreach ( $terms as $term ) {
 	$count++;
 
-	if ( in_array( $args['image_size'], array( 'thumbnail', 'medium', 'large' ) ) ) {
-		$w = absint( get_option( $args['image_size'] . '_size_w' ) );
-		$h = absint( get_option( $args['image_size'] . '_size_h' ) );
-	}
-
 	$image = wp_get_attachment_image( $term->image_id, $args['image_size'], false, array(
 		'class' => esc_attr( 'taxonomy-image ' . $args['image_size'] ),
 		'alt'   => esc_attr( $term->name ),
