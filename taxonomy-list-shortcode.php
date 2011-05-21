@@ -134,14 +134,18 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 		'pad_counts' => true,
 		);
 	$defaults = array(
-		'background'  => 'fff',
-		'color'       => '000',
+
+		/* Global arguments. */
 		'cols'        => 3,
 		'per_page'    => false,
 		'show_counts' => 1,
 		'tax'         => 'post_tag',
 		'template'    => 'index',
 		'image_size'  => 'thumbnail',
+
+		/* Index specific arguments. */
+		'background'  => 'ffffff',
+		'color'       => '000000',
 
 		/* Gallery specific arguments. */
 		'itemtag'     => 'dl',
@@ -162,6 +166,10 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	if ( absint( $args['cols'] ) > 5 ) {
 		$cols = 1;
 	}
+
+	/* Sanitize colors. */
+	$args['color'] = mf_taxonomy_list_sanitize_hex( $args['color'], $defaults['color'] );
+	$args['background'] = mf_taxonomy_list_sanitize_hex( $args['background'], $defaults['background'] );
 
 	/*
 	 * Pass the value of $template to get_terms().
@@ -280,4 +288,43 @@ function mfields_paged_taxonomy_link( $n ) {
 		}
 	}
 	return $url;
+}
+
+/**
+ * Is a given string a color formatted in hexidecimal notation?
+ *
+ * @param     string    Color in hexidecimal notation. "#" may or may not be prepended to the string.
+ * @return    bool
+ *
+ * @access    private
+ * @since     1.1
+ */
+function mf_taxonomy_list_validate_hex( $hex ) {
+	$hex = trim( (string) $hex );
+	if ( 0 === strpos( $hex, '#' ) ) {
+		$hex = substr( $hex, 1 );
+	}
+	else if ( 0 === strpos( $hex, '%23' ) ) {
+		$hex = substr( $hex, 3 );
+	}
+	if ( 0 === preg_match( '/^[0-9a-fA-F]{6}$/', $hex ) ) {
+		return false;
+	}
+	return true;
+}
+/**
+ * Sanitize a color represented in hexidecimal notation.
+ *
+ * @param     string    Unknown value to sanitize.
+ * @param     string    The value that this function should return if it cannot be recognized as a color.
+ * @return    string    $hex if valid, $default if not.
+ *
+ * @access    private
+ * @since     1.1
+ */
+function mf_taxonomy_list_sanitize_hex( $hex, $default = '' ) {
+	if ( mf_taxonomy_list_validate_hex( $hex ) ) {
+		return $hex;
+	}
+	return $default;
 }
