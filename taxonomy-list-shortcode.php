@@ -221,17 +221,17 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	}
 
 	/* Include template. */
-	if ( is_array( $terms ) && ! empty( $terms ) ) {
-		switch( $args['template'] ) {
-			case 'glossary' :
-				include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . 't-glossary.php';
-				break;
-			case 'index' :
-			default:
-				include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . 't-index.php';
-				break;
+	if ( in_array( $args['template'], array( 'index', 'glossary', 'gallery' ) ) ) {
+		$template_name = 'taxonomy-list-shortcode-' . $args['template'] . '.php';
+		$template = locate_template( $template_name );
+		if ( ! empty( $template ) ) {
+			include $template;
+		}
+		else {
+			include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
 		}
 	}
+
 	$o.= $nav;
 	$o = "\n\t" . '<!-- START mf-taxonomy-list-plugin -->' . $o . "\n\t" . '<!-- END mf-taxonomy-list-plugin -->' . "\n" ;
 	return $o;
