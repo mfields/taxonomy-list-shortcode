@@ -22,7 +22,7 @@ if ( ! defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
 	exit;
 }
 
-print "\n\n\n" . '<div class="gallery term-gallery term-gallery-columns-' . $args['cols'] . ' gallery-columns-' . $args['cols'] . ' gallery-size-' . sanitize_html_class( $args['image_size'] ) . '">';
+$o .= "\n\n\n" . '<div class="gallery term-gallery term-gallery-columns-' . $args['cols'] . ' gallery-columns-' . $args['cols'] . ' gallery-size-' . sanitize_html_class( $args['image_size'] ) . '">';
 
 $count = 0;
 foreach ( $terms as $term ) {
@@ -36,17 +36,17 @@ foreach ( $terms as $term ) {
 
 	$link = '<a href="' . esc_url( get_term_link( $term ) ) . '">' . $image . '</a>';
 
-	print "\n\n\t" . '<' . $args['itemtag'] . ' class="gallery-item">';
-	print "\n\t" . '<' . $args['icontag'] . ' class="gallery-icon">' . $link . '</' . $args['icontag'] . '>';
-	print "\n\t" . '<' . $args['captiontag'] . ' class="wp-caption-text gallery-caption">' . esc_html( $term->name ) . '</' . $args['captiontag'] . '>';
-	print "\n\t" . '</' . $args['itemtag'] . '>';
+	$o .= "\n\n\t" . '<' . $args['itemtag'] . ' class="gallery-item">';
+	$o .= "\n\t" . '<' . $args['icontag'] . ' class="gallery-icon">' . $link . '</' . $args['icontag'] . '>';
+	$o .= "\n\t" . '<' . $args['captiontag'] . ' class="wp-caption-text gallery-caption">' . esc_html( $term->name ) . '</' . $args['captiontag'] . '>';
+	$o .= "\n\t" . '</' . $args['itemtag'] . '>';
 
 	if ( 0 == $count % $args['cols'] ) {
-		print "\n\n\t" . '<br style="clear:both;">';
+		$o .= "\n\n\t" . '<br style="clear:both;">';
 	}
 }
-print "\n" . '<br style="clear:both;">';
-print "\n" . '</div>';
+$o .= "\n" . '<br style="clear:both;">';
+$o .= "\n" . '</div>';
 
 
 

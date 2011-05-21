@@ -67,11 +67,7 @@ add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
  * @since     1.0
  */
 function mf_taxonomy_list_shortcode_terms_clauses( $pieces, $taxonomies, $args ) {
-	if (
-		isset( $pieces['where'] ) &&
-		isset( $args['taxonomy_list_shortcode_template'] ) &&
-		'glossary' == $args['taxonomy_list_shortcode_template']
-	) {
+	if ( isset( $pieces['where'] ) && isset( $args['taxonomy_list_has_description'] ) ) {
 		$pieces['where'] .= " AND tt.description != ''";
 	}
 	return $pieces;
@@ -172,7 +168,7 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	$args['background'] = mf_taxonomy_list_sanitize_hex( $args['background'], $defaults['background'] );
 
 	/*
-	 * Pass the value of $template to get_terms().
+	 * Pass a custom value of 'taxonomy_list_has_description' get_terms().
 	 * This value will be used to flag glossary requests.
 	 * When a glossary is requested, it is important to only
 	 * display terms that have descriptions. Please see
@@ -180,7 +176,7 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	 * defined in this file.
 	 */
 	if ( 'glossary' == $args['template'] ) {
-		$term_args['taxonomy_list_shortcode_template'] = $args['template'];
+		$term_args['taxonomy_list_has_description'] = true;
 	}
 
 	/*
@@ -245,9 +241,12 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 			$next = '<div class="alignright"><a href="' . esc_url( mfields_paged_taxonomy_link( $current + 1 ) ) . '">' . esc_html( apply_filters( 'mf_taxonomy_list_shortcode_link_next', 'Next' ) ) . '</a></div>';
 		}
 		if ( $prev || $next ) {
-			print '<div class="navigation">' . $prev . $next . '</div><div class="clear"></div>';
+			$o .= '<div class="navigation">' . $prev . $next . '</div><div class="clear"></div>';
 		}
 	}
+
+	/* Print output. */
+	return $o;
 }
 add_shortcode( 'taxonomy-list', 'mf_taxonomy_list_shortcode' );
 
