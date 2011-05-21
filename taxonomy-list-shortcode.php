@@ -194,8 +194,15 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 		$offset = $args['per_page'] * ( $current - 1 );
 	}
 
-	/* Query for terms. */
-	$terms = get_terms( $args['tax'], $term_args );
+	/*
+	 * Query for terms.
+	 */
+	if ( 'gallery' == $args['template'] ) {
+		$terms = apply_filters( 'taxonomy-images-get-terms', '', array() );
+	}
+	else {
+		$terms = get_terms( $args['tax'], $term_args );
+	}
 	if ( is_wp_error( $terms ) ) {
 		return '';
 	}

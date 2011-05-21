@@ -15,11 +15,6 @@ if ( ! defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
 	exit;
 }
 
-$terms = apply_filters( 'taxonomy-images-get-terms', '', array() );
-if ( empty( $terms ) ) {
-	return;
-}
-
 print "\n\n\n" . '<div class="gallery term-gallery term-gallery-columns-' . $args['cols'] . ' gallery-columns-' . $args['cols'] . ' gallery-size-' . sanitize_html_class( $args['image_size'] ) . '">';
 
 $count = 0;
