@@ -117,6 +117,8 @@ function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
 /**
  * Shortcode.
  *
+ * Note: If paging is desired the page slug should not be "index".
+ *
  * @param     array          Attributes for the shortcode.
  * @return    string         unordered list(s) on sucess - empty string on failure.
  *
@@ -125,26 +127,31 @@ function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
  */
 function mf_taxonomy_list_shortcode( $atts = array() ) {
 	$o = '';
-	$nav = '';
 	$term_args = array(
-		'pad_counts' => true,
 		'hide_empty' => true,
+		'pad_counts' => true,
 		);
 	$defaults = array(
-		'tax'         => 'post_tag',
-		'cols'        => 3,
 		'background'  => 'fff',
 		'color'       => '000',
-		'show_counts' => 1,
+		'cols'        => 3,
 		'per_page'    => false,
+		'show_counts' => 1,
+		'tax'         => 'post_tag',
 		'template'    => 'index',
 		);
 
-	$atts = shortcode_atts( $defaults, $atts );
-	extract( $atts );
+	$args = shortcode_atts( $defaults, $atts );
+
+	/* Return early if taxonomy does not exist. */
+	if ( ! taxonomy_exists( $args['tax'] ) ) {
+		return '';
+	}
+
+	$args['per_page'] = absint( $args['per_page'] );
 
 	/* Only 1 - 5 columns are supported. */
-	if ( ! in_array( (int) $cols, array( 1, 2, 3, 4, 5 ) ) ) {
+	if ( absint( $args['cols'] ) > 5 ) {
 		$cols = 1;
 	}
 
@@ -157,74 +164,65 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	 * defined in this file.
 	 */
 	if ( 'glossary' == $args['template'] ) {
-		$term_args['taxonomy_list_shortcode_template'] = $template;
+		$term_args['taxonomy_list_shortcode_template'] = $args['template'];
 	}
 
 	/*
-	 * Paging arguments for get_terms(). For the "page" post_type only.
+	 * Calculate the number of the current paged view.
+	 * Define the value of offset.
 	 */
-	$per_page = absint( $per_page );
-	if ( $per_page && is_page() ) {
-		$term_args['number'] = $per_page;
-
-		$current_page = 0;
+	$offset = false;
+	if ( is_page() && ! empty( $args['per_page'] ) ) {
+		$current = 0;
 		if ( is_front_page() ) {
-			$current_page = (int) get_query_var( 'page' );
+			$current = (int) get_query_var( 'page' );
 		}
 		else {
-			$current_page = (int) get_query_var( 'paged' );
+			$current = (int) get_query_var( 'paged' );
 		}
-		if ( empty( $current_page ) ) {
-			$current_page = 1;
+		if ( empty( $current ) ) {
+			$current = 1;
 		}
+		$offset = $args['per_page'] * ( $current - 1 );
+	}
 
-		$offset = $per_page * ( $current_page - 1 );
+	/* Query for terms. */
+	$terms = get_terms( $args['tax'], $term_args );
+	if ( is_wp_error( $terms ) ) {
+		return '';
+	}
+	$total = count( $terms );
 
-		$term_args['offset'] = $offset;
+	/*
+	 * Offset has a value.
+	 *
+	 * 1. Filter terms array.
+	 * 2. Set the value of $nav.
+	 */
+	$nav = '';
+	if ( false !== $offset ) {
 
-		/* Need to get count for all terms of this taxonomy. */
-		$term_count_args = $term_args;
-		unset( $term_count_args['number'] );
-		unset( $term_count_args['offset'] );
-		$total_terms = wp_count_terms( $tax, $term_count_args );
+		/* Select Terms to display on this paged view. */
+		$terms = array_slice ( $terms, $offset, $args['per_page'] );
+		$count = count( $terms );
 
 		/* HTML for paged navigation */
-		if ( 0 === $offset ) {
-			$prev = null;
+		$prev = null;
+		if ( 0 < $offset ) {
+			$prev = '<div class="alignleft"><a href="' . esc_url( mfields_paged_taxonomy_link( $current - 1 ) ) . '">' . esc_html( apply_filters( 'mf_taxonomy_list_shortcode_link_prev', 'Previous' ) ) .' </a></div>';
 		}
-		else {
-			$href = mfields_paged_taxonomy_link( $current_page - 1 );
-			$prev = '<div class="alignleft"><a href="' . $href . '">' . apply_filters( 'mf_taxonomy_list_shortcode_link_prev', 'Previous' ) .' </a></div>';
-		}
-		if ( ( $offset + $per_page ) >= $total_terms ) {
-			$next = null;
-		}
-		else {
-			$href = mfields_paged_taxonomy_link( $current_page + 1 );
-			$next = '<div class="alignright"><a href="' . $href . '">' . apply_filters( 'mf_taxonomy_list_shortcode_link_next', 'Next' ) . '</a></div>';
+		$next = null;
+		if ( $offset + $count < $total ) {
+			$next = '<div class="alignright"><a href="' . esc_url( mfields_paged_taxonomy_link( $current + 1 ) ) . '">' . esc_html( apply_filters( 'mf_taxonomy_list_shortcode_link_next', 'Next' ) ) . '</a></div>';
 		}
 		if ( $prev || $next ) {
-			$nav = <<<EOF
-			<div class="navigation">
-				$prev
-				$next
-			</div>
-			<div class="clear"></div>
-EOF;
+			$nav = '<div class="navigation">' . $prev . $next . '</div><div class="clear"></div>';
 		}
 	}
-
-	/* The user-defined taxonomy does not exist - return an empty string. */
-	if ( ! taxonomy_exists( $tax ) ) {
-		return $o;
-	}
-
-	/* Get the terms for the given taxonomy. */
-	$terms = get_terms( $tax, $term_args );
 
 	/* Include template. */
 	if ( is_array( $terms ) && ! empty( $terms ) ) {
-		switch( $template ) {
+		switch( $args['template'] ) {
 			case 'glossary' :
 				include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . 't-glossary.php';
 				break;
