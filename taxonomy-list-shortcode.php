@@ -290,6 +290,7 @@ function mfields_paged_taxonomy_link( $n ) {
 	return $url;
 }
 
+
 /**
  * Is a given string a color formatted in hexidecimal notation?
  *
@@ -312,6 +313,8 @@ function mf_taxonomy_list_validate_hex( $hex ) {
 	}
 	return true;
 }
+
+
 /**
  * Sanitize a color represented in hexidecimal notation.
  *
