@@ -4,6 +4,13 @@
  *
  * Requires the Taxonomy Images plugin.
  *
+ * This template is closely modeled after the Wordpress core
+ * Gallery Shortcode. It should inherit styles directly from
+ * the theme. Unlike the gallery shortcode, this function will
+ * not include style blocks directly in the html body. A few
+ * styles have been added to this plugin's style.css file to
+ * aid in it's display.
+ *
  * @package      Taxonomy List Shortcode
  * @author       Michael Fields <michael@mfields.org>
  * @copyright    Copyright (c) 2011, Michael Fields
