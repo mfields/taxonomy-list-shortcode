@@ -126,6 +126,8 @@ function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
  * @since     0.1
  */
 function mf_taxonomy_list_shortcode( $atts = array() ) {
+	static $instance = 0;
+	$instance++;
 	$o = '';
 	$term_args = array(
 		'hide_empty' => true,
@@ -139,6 +141,12 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 		'show_counts' => 1,
 		'tax'         => 'post_tag',
 		'template'    => 'index',
+		'image_size'  => 'thumbnail',
+
+		/* Gallery specific arguments. */
+		'itemtag'     => 'dl',
+		'icontag'     => 'dt',
+		'captiontag'  => 'dd',
 		);
 
 	$args = shortcode_atts( $defaults, $atts );
@@ -193,13 +201,19 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	}
 	$total = count( $terms );
 
-	/*
-	 * Offset has a value.
-	 *
-	 * 1. Filter terms array.
-	 * 2. Set the value of $nav.
-	 */
-	$nav = '';
+	/* Include template. */
+	if ( in_array( $args['template'], array( 'index', 'glossary', 'gallery' ) ) ) {
+		$template_name = 'taxonomy-list-shortcode-' . $args['template'] . '.php';
+		$template = locate_template( $template_name );
+		if ( ! empty( $template ) ) {
+			include $template;
+		}
+		else {
+			include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
+		}
+	}
+
+	/* Paged navigation. */
 	if ( false !== $offset ) {
 
 		/* Select Terms to display on this paged view. */
@@ -216,25 +230,9 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 			$next = '<div class="alignright"><a href="' . esc_url( mfields_paged_taxonomy_link( $current + 1 ) ) . '">' . esc_html( apply_filters( 'mf_taxonomy_list_shortcode_link_next', 'Next' ) ) . '</a></div>';
 		}
 		if ( $prev || $next ) {
-			$nav = '<div class="navigation">' . $prev . $next . '</div><div class="clear"></div>';
+			print '<div class="navigation">' . $prev . $next . '</div><div class="clear"></div>';
 		}
 	}
-
-	/* Include template. */
-	if ( in_array( $args['template'], array( 'index', 'glossary', 'gallery' ) ) ) {
-		$template_name = 'taxonomy-list-shortcode-' . $args['template'] . '.php';
-		$template = locate_template( $template_name );
-		if ( ! empty( $template ) ) {
-			include $template;
-		}
-		else {
-			include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
-		}
-	}
-
-	$o.= $nav;
-	$o = "\n\t" . '<!-- START mf-taxonomy-list-plugin -->' . $o . "\n\t" . '<!-- END mf-taxonomy-list-plugin -->' . "\n" ;
-	return $o;
 }
 add_shortcode( 'taxonomy-list', 'mf_taxonomy_list_shortcode' );
 
