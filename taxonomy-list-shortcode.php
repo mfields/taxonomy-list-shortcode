@@ -32,7 +32,28 @@ define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
 /**
  * Shortcode.
  *
- * Note: If paging is desired the page slug should not be "index".
+ * Recognized Arguments:
+ *
+ * cols - (int) Number of culomns to group the terms into. This option
+ * is only use in the "index" and "gallery templates". Accepted values
+ * are 1 - 5. Optional. Defaults to 3.
+ *
+ * image_size - (string) Value of any registered image size. This argument
+ * will only be used by the "gallery" template. Optional.
+ *
+ * per_page - (int) Number of terms to show per page. Setting this value
+ * will enable the list of terms to be displayed in separate pages. Paging
+ * is only available when this shortcode is used in posts having the "page"
+ * post_type. If paging is desired the page slug should not be "index".
+ * Optional.
+ *
+ * tax - (string) Name of the taxonomy as registered with WordPress. More
+ * than one taxonomy can be passed by separating the names with commas.
+ *
+ * template - (string) Specify a template to use to display the terms.
+ * 3 different options are available: "index", "definition-list" and
+ * "gallery". Please see each individual template for instructions on
+ * their intended use. Optional. Defaults to "index".
  *
  * @param     array          Attributes for the shortcode.
  * @return    string         unordered list(s) on sucess - empty string on failure.
@@ -52,20 +73,20 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 
 		/* Global arguments. */
 		'cols'        => 3,
+		'image_size'  => 'thumbnail',
 		'per_page'    => false,
 		'show_counts' => 1,
 		'tax'         => 'post_tag',
 		'template'    => 'index',
-		'image_size'  => 'thumbnail',
 
 		/* Index specific arguments. */
 		'background'  => 'ffffff',
 		'color'       => '000000',
 
 		/* Gallery specific arguments. */
+		'captiontag'  => 'dd',
 		'itemtag'     => 'dl',
 		'icontag'     => 'dt',
-		'captiontag'  => 'dd',
 		);
 
 	$args = shortcode_atts( $defaults, $atts );
