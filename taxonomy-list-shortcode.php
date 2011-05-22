@@ -30,87 +30,6 @@ define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
 
 
 /**
- * Custom Styles
- *
- * Adds custom stylesheet to public views.
- * Themes can suppress styles by defining a constant named
- * MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES in functions.php.
- *
- * @access     private
- * @since      unknown
- * @alter      2011-05-18
- */
-function mf_taxonomy_list_css() {
-	if ( defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
-		return;
-	}
-	wp_enqueue_style( 'taxonomy-list-shortcode', MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
-}
-add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
-
-
-/**
- * Get terms having descriptions.
- *
- * Only query for terms with descriptions when definition-list
- * template is used.
- *
- * This filter is intended to fire during the 'terms_clauses' hook
- * in the WordPress core function get_terms().
- *
- * @param     array          SQL bits used to create a full term query.
- * @param     array          List of taxonomies to query for.
- * @param     array          Arguments passed to get_terms().
- * @return    array          SQL bits used to create a full term query.
- *
- * @access    private
- * @since     1.0
- */
-function mf_taxonomy_list_shortcode_terms_clauses( $pieces, $taxonomies, $args ) {
-	if ( isset( $pieces['where'] ) && isset( $args['taxonomy_list_has_description'] ) ) {
-		$pieces['where'] .= " AND tt.description != ''";
-	}
-	return $pieces;
-}
-add_filter( 'terms_clauses', 'mf_taxonomy_list_shortcode_terms_clauses', 10, 3 );
-
-
-/**
- * Edit Term Link.
- *
- * Print a link to edit a given term.
- *
- * @param     stdClass       Term Object.
- * @return    string         HTML anchor element.
- *
- * @access    private
- * @since     1.0
- */
-function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
-	if ( ! isset( $term->taxonomy ) ) {
-		return '';
-	}
-
-	$taxonomy = get_taxonomy( $term->taxonomy );
-
-	$cap = '';
-	if ( isset( $taxonomy->cap->edit_terms ) ) {
-		$cap = $taxonomy->cap->edit_terms;
-	}
-
-	if ( ! current_user_can( $cap ) ) {
-		return '';
-	}
-
-	if ( ! isset( $term->term_id ) ) {
-		return '';
-	}
-
-	return '<a class="edit-term" href="' . esc_url( add_query_arg( array( 'action'   => 'edit', 'taxonomy' => $term->taxonomy, 'tag_ID'   => $term->term_id ), admin_url( 'edit-tags.php' ) ) ) . '"><img src="' . esc_url( MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/edit.png' ) . '" alt="' . esc_attr__( 'Edit', 'taxonomy_list_shortcode' ) . '" /></a> ';
-}
-
-
-/**
  * Shortcode.
  *
  * Note: If paging is desired the page slug should not be "index".
@@ -248,6 +167,87 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	return $o;
 }
 add_shortcode( 'taxonomy-list', 'mf_taxonomy_list_shortcode' );
+
+
+/**
+ * Custom Styles
+ *
+ * Adds custom stylesheet to public views.
+ * Themes can suppress styles by defining a constant named
+ * MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES in functions.php.
+ *
+ * @access     private
+ * @since      unknown
+ * @alter      2011-05-18
+ */
+function mf_taxonomy_list_css() {
+	if ( defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
+		return;
+	}
+	wp_enqueue_style( 'taxonomy-list-shortcode', MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
+}
+add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
+
+
+/**
+ * Get terms having descriptions.
+ *
+ * Only query for terms with descriptions when definition-list
+ * template is used.
+ *
+ * This filter is intended to fire during the 'terms_clauses' hook
+ * in the WordPress core function get_terms().
+ *
+ * @param     array          SQL bits used to create a full term query.
+ * @param     array          List of taxonomies to query for.
+ * @param     array          Arguments passed to get_terms().
+ * @return    array          SQL bits used to create a full term query.
+ *
+ * @access    private
+ * @since     1.0
+ */
+function mf_taxonomy_list_shortcode_terms_clauses( $pieces, $taxonomies, $args ) {
+	if ( isset( $pieces['where'] ) && isset( $args['taxonomy_list_has_description'] ) ) {
+		$pieces['where'] .= " AND tt.description != ''";
+	}
+	return $pieces;
+}
+add_filter( 'terms_clauses', 'mf_taxonomy_list_shortcode_terms_clauses', 10, 3 );
+
+
+/**
+ * Edit Term Link.
+ *
+ * Print a link to edit a given term.
+ *
+ * @param     stdClass       Term Object.
+ * @return    string         HTML anchor element.
+ *
+ * @access    private
+ * @since     1.0
+ */
+function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
+	if ( ! isset( $term->taxonomy ) ) {
+		return '';
+	}
+
+	$taxonomy = get_taxonomy( $term->taxonomy );
+
+	$cap = '';
+	if ( isset( $taxonomy->cap->edit_terms ) ) {
+		$cap = $taxonomy->cap->edit_terms;
+	}
+
+	if ( ! current_user_can( $cap ) ) {
+		return '';
+	}
+
+	if ( ! isset( $term->term_id ) ) {
+		return '';
+	}
+
+	return '<a class="edit-term" href="' . esc_url( add_query_arg( array( 'action'   => 'edit', 'taxonomy' => $term->taxonomy, 'tag_ID'   => $term->term_id ), admin_url( 'edit-tags.php' ) ) ) . '"><img src="' . esc_url( MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/edit.png' ) . '" alt="' . esc_attr__( 'Edit', 'taxonomy_list_shortcode' ) . '" /></a> ';
+}
 
 
 /**
