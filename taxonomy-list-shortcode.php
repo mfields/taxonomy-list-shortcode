@@ -334,7 +334,7 @@ function mf_taxonomy_list_term_description( $default, $args = array() ) {
 
 	$args['term']->description .= ' <a class="term-archive-link" href="' . esc_url( get_term_link( $args['term'], $args['term']->taxonomy ) ) . '">' . esc_html( $args['link_text'] ) . '</a>';
 
-	return sanitize_term_field( 'description', $args['term']->description, $args['term']->term_id, $args['term']->taxonomy, 'display' );
+	return $args['before'] . sanitize_term_field( 'description', $args['term']->description, $args['term']->term_id, $args['term']->taxonomy, 'display' ) . $args['after'];
 }
 add_filter( 'taxonomy-list-term-description', 'mf_taxonomy_list_term_description', 10, 2 );
 
