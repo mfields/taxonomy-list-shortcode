@@ -9,13 +9,6 @@ if ( ! defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
 	exit;
 }
 
-var_dump( count( $terms ) / $args['cols'] );
-print '<br>';
-var_dump( ceil( count( $terms ) / $args['cols'] ) );
-print '<br>';
-
-
-
 /* Split the array into smaller pieces + generate html to display lists. */
 $chunked = array_chunk( $terms, ceil( count( $terms ) / $args['cols'] ) );
 
