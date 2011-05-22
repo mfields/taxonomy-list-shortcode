@@ -205,10 +205,8 @@ add_shortcode( 'taxonomy-list', 'mf_taxonomy_list_shortcode' );
  * @since     1.1
  */
 function taxonomy_list_shortcode_reset_cache_key( $args ) {
-	static $instance = 0;
-	$instance++;
 	if ( isset( $args['taxonomy_list_has_description'] ) ) {
-		wp_cache_set( 'last_changed', time() . $i, 'terms' );
+		wp_cache_set( 'last_changed', time() . '-description-only', 'terms' );
 	}
 	return $args;
 }
