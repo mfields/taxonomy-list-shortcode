@@ -34,7 +34,7 @@ define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
  *
  * Recognized Arguments:
  *
- * cols - (int) Number of culomns to group the terms into. This option
+ * cols - (int) Number of columns to group the terms into. This option
  * is only use in the "index" and "gallery templates". Accepted values
  * are 1 - 5. Optional. Defaults to 3.
  *
@@ -61,7 +61,7 @@ define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
  * @access    private
  * @since     0.1
  */
-function mf_taxonomy_list_shortcode( $atts = array() ) {
+function mf_taxonomy_list_shortcode( $args = array() ) {
 	static $instance = 0;
 	$instance++;
 	$o = '';
@@ -89,7 +89,7 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 		'icontag'     => 'dt',
 		);
 
-	$args = shortcode_atts( $defaults, $atts );
+	$args = shortcode_atts( $defaults, $args );
 
 	if ( 0 !== strpos( $args['tax'], ',' ) ) {
 		$args['tax'] = explode( ',', $args['tax'] );
@@ -151,19 +151,8 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	}
 	$total = count( $terms );
 
-	/* Include template. */
-	if ( in_array( $args['template'], array( 'index', 'definition-list', 'gallery' ) ) ) {
-		$template_name = 'taxonomy-list-shortcode-' . $args['template'] . '.php';
-		$template = locate_template( $template_name );
-		if ( ! empty( $template ) ) {
-			include $template;
-		}
-		else {
-			include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
-		}
-	}
-
 	/* Paged navigation. */
+	$nav = '';
 	if ( false !== $offset ) {
 
 		/* Select Terms to display on this paged view. */
@@ -180,7 +169,19 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 			$next = '<div class="alignright"><a href="' . esc_url( mfields_paged_taxonomy_link( $current + 1 ) ) . '">' . esc_html( apply_filters( 'mf_taxonomy_list_shortcode_link_next', 'Next' ) ) . '</a></div>';
 		}
 		if ( $prev || $next ) {
-			$o .= '<div class="navigation">' . $prev . $next . '</div><div class="clear"></div>';
+			$nav = '<div class="navigation">' . $prev . $next . '</div><div class="clear"></div>';
+		}
+	}
+
+	/* Include template. */
+	if ( in_array( $args['template'], array( 'index', 'definition-list', 'gallery' ) ) ) {
+		$template_name = 'taxonomy-list-shortcode-' . $args['template'] . '.php';
+		$template = locate_template( $template_name );
+		if ( ! empty( $template ) ) {
+			include $template;
+		}
+		else {
+			include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
 		}
 	}
 
@@ -188,6 +189,30 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 	return $o;
 }
 add_shortcode( 'taxonomy-list', 'mf_taxonomy_list_shortcode' );
+
+
+/**
+ * Reset Cache Key
+ *
+ * In case where get_terms() has been called before this shortcode
+ * is called with the same arguments AND the requested template
+ * is the definition list, we need to force the cache key to have
+ * a unique value so that the query will be executed. Requesting
+ * the definition list template triggers a custom clause to be
+ * defined in mf_taxonomy_list_shortcode_terms_clauses().
+ *
+ * @access    private
+ * @since     1.1
+ */
+function taxonomy_list_shortcode_reset_cache_key( $args ) {
+	static $instance = 0;
+	$instance++;
+	if ( isset( $args['taxonomy_list_has_description'] ) ) {
+		wp_cache_set( 'last_changed', time() . $i, 'terms' );
+	}
+	return $args;
+}
+add_filter( 'get_terms_args', 'taxonomy_list_shortcode_reset_cache_key' );
 
 
 /**
