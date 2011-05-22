@@ -151,9 +151,8 @@ function mf_taxonomy_list_shortcode( $atts = array() ) {
 
 	$args = shortcode_atts( $defaults, $atts );
 
-	/* Return early if taxonomy does not exist. */
-	if ( ! taxonomy_exists( $args['tax'] ) ) {
-		return '';
+	if ( 0 !== strpos( $args['tax'], ',' ) ) {
+		$args['tax'] = explode( ',', $args['tax'] );
 	}
 
 	$args['per_page'] = absint( $args['per_page'] );
