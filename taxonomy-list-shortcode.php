@@ -291,6 +291,56 @@ function mfields_paged_taxonomy_link( $n ) {
 
 
 /**
+ * Term Desciption.
+ *
+ * Gets the description for a given term for use in templates.
+ * This function will append an html link to the description
+ * before it is passed through text filters.
+ *
+ * Recognized arguments:
+ *
+ * term - (stdClass) Wordpress term object. Required.
+ *
+ * before - (string) Text to prepend to the term description. Optional.
+ * Defaults to an empty string.
+ *
+ * after - (string) Text to prepend to the term description. Optional.
+ * Defaults to an empty string.
+ *
+ * link_text - (string) Text to use inside the link that will appended
+ * to the term description. Optional. Defaults to "View entries".
+ *
+ * @param     mixed     Default value. Not used.
+ * @param     array     Named arguments. Please see above for detailed description.
+ * @return    string    Term description ready for use in templates with archive link appended.
+ *
+ * @access    private
+ * @since     1.1
+ */
+function mf_taxonomy_list_term_description( $default, $args = array() ) {
+	$args = wp_parse_args( $args, array(
+		'term'      => false,
+		'before'    => '',
+		'after'     => '',
+		'link_text' => __( 'View entries', 'taxonomy-list' )
+		) );
+
+	if ( ! isset( $args['term']->taxonomy ) || ! isset( $args['term']->description ) ) {
+		return '1234';
+	}
+
+	if ( empty( $args['term']->description ) ) {
+		return '5678';
+	}
+
+	$args['term']->description .= ' <a class="term-archive-link" href="' . esc_url( get_term_link( $args['term'], $args['term']->taxonomy ) ) . '">' . esc_html( $args['link_text'] ) . '</a>';
+
+	return sanitize_term_field( 'description', $args['term']->description, $args['term']->term_id, $args['term']->taxonomy, 'display' );
+}
+add_filter( 'taxonomy-list-term-description', 'mf_taxonomy_list_term_description', 10, 2 );
+
+
+/**
  * Is a given string a color formatted in hexidecimal notation?
  *
  * @param     string    Color in hexidecimal notation. "#" may or may not be prepended to the string.
