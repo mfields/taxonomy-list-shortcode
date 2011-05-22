@@ -2,7 +2,7 @@
 /**
  * Index Template.
  *
- * @since 2011-02-13
+ * @since     1.1
  */
 
 if ( ! defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
