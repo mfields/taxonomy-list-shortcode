@@ -18,7 +18,7 @@
  * @since        1.1
  */
 
-if ( ! defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
+if ( ! defined( 'TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
 	exit;
 }
 

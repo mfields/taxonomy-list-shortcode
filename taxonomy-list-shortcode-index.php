@@ -5,7 +5,7 @@
  * @since     1.1
  */
 
-if ( ! defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
+if ( ! defined( 'TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
 	exit;
 }
 
@@ -26,7 +26,7 @@ foreach ( $chunked as $k => $column ) {
 		$class = ( $args['show_counts'] ) ? ' class="has-quantity"' : '';
 		$quantity = ( $args['show_counts'] ) ? ' <span' . $style . ' class="quantity">' . $count . '</span>' : '';
 
-		$o.= "\n\t\t" . '<li' . $class . $style . '><a' . $style . ' class="term-name" href="' . esc_url( $url ) . '">' . esc_html( $term->name ) . '</a>' . mf_taxonomy_list_shortcode_edit_term_link( $term ) . '' . $quantity . '</li>';
+		$o.= "\n\t\t" . '<li' . $class . $style . '><a' . $style . ' class="term-name" href="' . esc_url( $url ) . '">' . esc_html( $term->name ) . '</a>' . taxonomy_list_shortcode_edit_term_link( $term ) . '' . $quantity . '</li>';
 	}
 	$o.=  "\n\t" . '</ul>';
 }

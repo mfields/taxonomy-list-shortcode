@@ -24,9 +24,9 @@ edit.png is a modified version of gtk-edit.png from the Gnome icons set
 */
 
 
-define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION', '1.2-dev' );
-define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_URL',     plugin_dir_url( __FILE__ ) );
-define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
+define( 'TAXONOMY_LIST_SHORTCODE_VERSION', '1.2-dev' );
+define( 'TAXONOMY_LIST_SHORTCODE_URL',     plugin_dir_url( __FILE__ ) );
+define( 'TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
 
 
 /**
@@ -61,7 +61,7 @@ define( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
  * @access    private
  * @since     0.1
  */
-function mf_taxonomy_list_shortcode( $args = array() ) {
+function taxonomy_list_shortcode( $args = array() ) {
 	static $instance = 0;
 	$instance++;
 	$o = '';
@@ -103,15 +103,15 @@ function mf_taxonomy_list_shortcode( $args = array() ) {
 	}
 
 	/* Sanitize colors. */
-	$args['color'] = mf_taxonomy_list_sanitize_hex( $args['color'], $defaults['color'] );
-	$args['background'] = mf_taxonomy_list_sanitize_hex( $args['background'], $defaults['background'] );
+	$args['color'] = taxonomy_list_shortcode_sanitize_hex( $args['color'], $defaults['color'] );
+	$args['background'] = taxonomy_list_shortcode_sanitize_hex( $args['background'], $defaults['background'] );
 
 	/*
 	 * Pass a custom value of 'taxonomy_list_has_description' get_terms().
 	 * This value will be used to flag definition-list requests.
 	 * When a definition-list is requested, it is important to only
 	 * display terms that have descriptions. Please see
-	 * mf_taxonomy_list_shortcode_terms_clauses()
+	 * taxonomy_list_shortcode_terms_clauses()
 	 * defined in this file.
 	 */
 	if ( 'definition-list' == $args['template'] ) {
@@ -162,11 +162,11 @@ function mf_taxonomy_list_shortcode( $args = array() ) {
 		/* HTML for paged navigation */
 		$prev = null;
 		if ( 0 < $offset ) {
-			$prev = '<div class="alignleft"><a href="' . esc_url( mfields_paged_taxonomy_link( $current - 1 ) ) . '">' . esc_html( apply_filters( 'mf_taxonomy_list_shortcode_link_prev', 'Previous' ) ) .' </a></div>';
+			$prev = '<div class="alignleft"><a href="' . esc_url( taxonomy_list_shortcode_paged_taxonomy_link( $current - 1 ) ) . '">' . esc_html( apply_filters( 'taxonomy_list_shortcode_link_prev', 'Previous' ) ) .' </a></div>';
 		}
 		$next = null;
 		if ( $offset + $count < $total ) {
-			$next = '<div class="alignright"><a href="' . esc_url( mfields_paged_taxonomy_link( $current + 1 ) ) . '">' . esc_html( apply_filters( 'mf_taxonomy_list_shortcode_link_next', 'Next' ) ) . '</a></div>';
+			$next = '<div class="alignright"><a href="' . esc_url( taxonomy_list_shortcode_paged_taxonomy_link( $current + 1 ) ) . '">' . esc_html( apply_filters( 'taxonomy_list_shortcode_link_next', 'Next' ) ) . '</a></div>';
 		}
 		if ( $prev || $next ) {
 			$nav = '<div class="navigation">' . $prev . $next . '</div><div class="clear"></div>';
@@ -181,14 +181,14 @@ function mf_taxonomy_list_shortcode( $args = array() ) {
 			include $template;
 		}
 		else {
-			include MFIELDS_TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
+			include TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
 		}
 	}
 
 	/* Print output. */
 	return $o;
 }
-add_shortcode( 'taxonomy-list', 'mf_taxonomy_list_shortcode' );
+add_shortcode( 'taxonomy-list', 'taxonomy_list_shortcode' );
 
 
 /**
@@ -199,7 +199,7 @@ add_shortcode( 'taxonomy-list', 'mf_taxonomy_list_shortcode' );
  * is the definition list, we need to force the cache key to have
  * a unique value so that the query will be executed. Requesting
  * the definition list template triggers a custom clause to be
- * defined in mf_taxonomy_list_shortcode_terms_clauses().
+ * defined in taxonomy_list_shortcode_terms_clauses().
  *
  * @access    private
  * @since     1.1
@@ -222,19 +222,19 @@ add_filter( 'get_terms_args', 'taxonomy_list_shortcode_reset_cache_key' );
  *
  * Adds custom stylesheet to public views.
  * Themes can suppress styles by defining a constant named
- * MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES in functions.php.
+ * TAXONOMY_LIST_SHORTCODE_NO_STYLES in functions.php.
  *
  * @access     private
  * @since      unknown
  * @alter      2011-05-18
  */
-function mf_taxonomy_list_css() {
-	if ( defined( 'MFIELDS_TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
+function taxonomy_list_shortcode_css() {
+	if ( defined( 'TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
 		return;
 	}
-	wp_enqueue_style( 'taxonomy-list-shortcode', MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), MFIELDS_TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
+	wp_enqueue_style( 'taxonomy-list-shortcode', TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
 }
-add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
+add_action( 'wp_print_styles', 'taxonomy_list_shortcode_css' );
 
 
 /**
@@ -254,13 +254,13 @@ add_action( 'wp_print_styles', 'mf_taxonomy_list_css' );
  * @access    private
  * @since     1.0
  */
-function mf_taxonomy_list_shortcode_terms_clauses( $pieces, $taxonomies, $args ) {
+function taxonomy_list_shortcode_terms_clauses( $pieces, $taxonomies, $args ) {
 	if ( isset( $pieces['where'] ) && isset( $args['taxonomy_list_has_description'] ) ) {
 		$pieces['where'] .= " AND tt.description != ''";
 	}
 	return $pieces;
 }
-add_filter( 'terms_clauses', 'mf_taxonomy_list_shortcode_terms_clauses', 10, 3 );
+add_filter( 'terms_clauses', 'taxonomy_list_shortcode_terms_clauses', 10, 3 );
 
 
 /**
@@ -274,7 +274,7 @@ add_filter( 'terms_clauses', 'mf_taxonomy_list_shortcode_terms_clauses', 10, 3 )
  * @access    private
  * @since     1.0
  */
-function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
+function taxonomy_list_shortcode_edit_term_link( $term ) {
 	if ( ! isset( $term->taxonomy ) ) {
 		return '';
 	}
@@ -294,7 +294,7 @@ function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
 		return '';
 	}
 
-	return '<a class="edit-term" href="' . esc_url( add_query_arg( array( 'action'   => 'edit', 'taxonomy' => $term->taxonomy, 'tag_ID'   => $term->term_id ), admin_url( 'edit-tags.php' ) ) ) . '"><img src="' . esc_url( MFIELDS_TAXONOMY_LIST_SHORTCODE_URL . '/edit.png' ) . '" alt="' . esc_attr__( 'Edit', 'taxonomy_list_shortcode' ) . '" /></a> ';
+	return '<a class="edit-term" href="' . esc_url( add_query_arg( array( 'action'   => 'edit', 'taxonomy' => $term->taxonomy, 'tag_ID'   => $term->term_id ), admin_url( 'edit-tags.php' ) ) ) . '"><img src="' . esc_url( TAXONOMY_LIST_SHORTCODE_URL . '/edit.png' ) . '" alt="' . esc_attr__( 'Edit', 'taxonomy_list_shortcode' ) . '" /></a> ';
 }
 
 
@@ -313,7 +313,7 @@ function mf_taxonomy_list_shortcode_edit_term_link( $term ) {
  * @access     private
  * @since      1.0
  */
-function mfields_paged_taxonomy_link( $n ) {
+function taxonomy_list_shortcode_paged_taxonomy_link( $n ) {
 	if ( 1 == $n ) {
 		$url = get_permalink();
 	}
@@ -364,7 +364,7 @@ function mfields_paged_taxonomy_link( $n ) {
  * @access    private
  * @since     1.1
  */
-function mf_taxonomy_list_term_description( $default, $args = array() ) {
+function taxonomy_list_shortcode_term_description( $default, $args = array() ) {
 	$args = wp_parse_args( $args, array(
 		'term'      => false,
 		'before'    => '',
@@ -384,7 +384,7 @@ function mf_taxonomy_list_term_description( $default, $args = array() ) {
 
 	return $args['before'] . sanitize_term_field( 'description', $args['term']->description, $args['term']->term_id, $args['term']->taxonomy, 'display' ) . $args['after'];
 }
-add_filter( 'taxonomy-list-term-description', 'mf_taxonomy_list_term_description', 10, 2 );
+add_filter( 'taxonomy-list-term-description', 'taxonomy_list_shortcode_term_description', 10, 2 );
 
 
 /**
@@ -396,7 +396,7 @@ add_filter( 'taxonomy-list-term-description', 'mf_taxonomy_list_term_description
  * @access    private
  * @since     1.1
  */
-function mf_taxonomy_list_validate_hex( $hex ) {
+function taxonomy_list_shortcode_validate_hex( $hex ) {
 	$hex = trim( (string) $hex );
 	if ( 0 === strpos( $hex, '#' ) ) {
 		$hex = substr( $hex, 1 );
@@ -421,8 +421,8 @@ function mf_taxonomy_list_validate_hex( $hex ) {
  * @access    private
  * @since     1.1
  */
-function mf_taxonomy_list_sanitize_hex( $hex, $default = '' ) {
-	if ( mf_taxonomy_list_validate_hex( $hex ) ) {
+function taxonomy_list_shortcode_sanitize_hex( $hex, $default = '' ) {
+	if ( taxonomy_list_shortcode_validate_hex( $hex ) ) {
 		return $hex;
 	}
 	return $default;
