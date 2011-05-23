@@ -34,7 +34,7 @@ if ( ! defined( 'TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
 $o.= "\n\n\n" . '<div class="taxonomy-list-definition-list">';
 $o.= "\n" . '<dl>';
 foreach ( (array) $terms as $term ) {
-	$o.= "\n" . '<dt  id="' . esc_attr( $term->slug ) . '" class="term-name">' . esc_html( $term->name ) . taxonomy_list_shortcode_edit_term_link( $term ) . '</dt>';
+	$o.= "\n" . '<dt id="' . esc_attr( $term->slug ) . '" class="term-name">' . esc_html( $term->name ) . taxonomy_list_shortcode_edit_term_link( $term ) . '</dt>';
 	$o.= apply_filters( 'taxonomy-list-term-description', '', array(
 		'term'   => $term,
 		'before' => '<dd class="term-description">',
