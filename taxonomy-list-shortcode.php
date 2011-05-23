@@ -208,6 +208,10 @@ function taxonomy_list_shortcode_reset_cache_key( $args ) {
 	if ( isset( $args['taxonomy_list_has_description'] ) ) {
 		wp_cache_set( 'last_changed', time() . '-description-only', 'terms' );
 	}
+	else {
+		wp_cache_set( 'last_changed', time(), 'terms' );
+	}
+
 	return $args;
 }
 add_filter( 'get_terms_args', 'taxonomy_list_shortcode_reset_cache_key' );
