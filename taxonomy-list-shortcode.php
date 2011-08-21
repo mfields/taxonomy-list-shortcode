@@ -205,10 +205,17 @@ add_shortcode( 'taxonomy-list', 'taxonomy_list_shortcode' );
  * @alter      2011-05-18
  */
 function taxonomy_list_shortcode_css() {
-	if ( defined( 'TAXONOMY_LIST_SHORTCODE_NO_STYLES' ) ) {
+	$print_styles = (bool) apply_filters( 'taxonomy-list-shortcode-print-styles', true );
+	if ( empty( $print_styles ) ) {
 		return;
 	}
-	wp_enqueue_style( 'taxonomy-list-shortcode', TAXONOMY_LIST_SHORTCODE_URL . '/style.css', array(), TAXONOMY_LIST_SHORTCODE_VERSION, 'screen' );
+	wp_enqueue_style(
+		'taxonomy-list-shortcode',
+		TAXONOMY_LIST_SHORTCODE_URL . '/style.css',
+		array(),
+		TAXONOMY_LIST_SHORTCODE_VERSION,
+		'screen'
+	);
 }
 add_action( 'wp_print_styles', 'taxonomy_list_shortcode_css' );
 
