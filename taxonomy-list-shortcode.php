@@ -110,8 +110,9 @@ function taxonomy_list_shortcode( $args = array() ) {
 	 * Pass a custom cache domain to get_terms().
 	 * Only needed for the definition list template.
 	 */
-	if ( 'definition-list' == $args['template'] ) {
-		$term_args['cache_domain'] = 'taxonomy_list_shortcode';
+	$term_args['cache_domain'] = 'taxonomy_list_shortcode';
+	if ( in_array( $args['template'], array( 'index', 'definition-list', 'gallery' ) ) ) {
+		$term_args['cache_domain'] .= '-' . $args['template'];
 	}
 
 	/*
@@ -139,7 +140,8 @@ function taxonomy_list_shortcode( $args = array() ) {
 	if ( 'gallery' == $args['template'] ) {
 		$error = new WP_Error();
 		$terms = apply_filters( 'taxonomy-images-get-terms', $error, array(
-			'taxonomy' => $args['tax'],
+			'taxonomy'  => $args['tax'],
+			'term_args' => $term_args,
 		) );
 	}
 	else {
@@ -147,6 +149,8 @@ function taxonomy_list_shortcode( $args = array() ) {
 	}
 
 #print '<pre>' . print_r( $terms, true ) . '</pre>';
+print '<pre>' . print_r( count( $terms ), true ) . '</pre>';
+#print '<pre>' . print_r( $term_args, true ) . '</pre>';
 
 	if ( is_wp_error( $terms ) ) {
 		return 'ERROR TERMS';
@@ -161,7 +165,7 @@ function taxonomy_list_shortcode( $args = array() ) {
 	if ( false !== $offset ) {
 
 		/* Select Terms to display on this paged view. */
-		$terms = array_slice ( $terms, $offset, $args['per_page'] );
+		$terms = array_slice( $terms, $offset, $args['per_page'] );
 		$count = count( $terms );
 
 		/* HTML for paged navigation */
@@ -245,7 +249,7 @@ function taxonomy_list_shortcode_terms_clauses( $pieces, $taxonomies, $args ) {
 	if ( ! isset( $args['cache_domain'] ) ) {
 		return $pieces;
 	}
-	if ( 'taxonomy_list_shortcode' == $args['cache_domain'] ) {
+	if ( 'taxonomy_list_shortcode-definition-list' == $args['cache_domain'] ) {
 		$pieces['where'] .= " AND tt.description != ''";
 	}
 	return $pieces;
