@@ -25,7 +25,7 @@ if ( ! defined( 'TAXONOMY_LIST_SHORTCODE_DIR' ) ) {
 $o .= "\n\n\n" . '<div class="gallery term-gallery term-gallery-columns-' . $args['cols'] . ' gallery-columns-' . $args['cols'] . ' gallery-size-' . sanitize_html_class( $args['image_size'] ) . '">';
 
 $count = 0;
-foreach ( $terms as $term ) {
+foreach ( (array) $terms as $term ) {
 	$count++;
 
 	$image = wp_get_attachment_image( $term->image_id, $args['image_size'], false, array(
