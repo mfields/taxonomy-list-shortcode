@@ -137,7 +137,8 @@ function taxonomy_list_shortcode( $args = array() ) {
 	 * Query for terms.
 	 */
 	if ( 'gallery' == $args['template'] ) {
-		$terms = apply_filters( 'taxonomy-images-get-terms', '', array() );
+		$error = new WP_Error();
+		$terms = apply_filters( 'taxonomy-images-get-terms', $error, array() );
 	}
 	else {
 		$terms = get_terms( $args['tax'], $term_args );
