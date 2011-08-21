@@ -55,8 +55,8 @@ define( 'TAXONOMY_LIST_SHORTCODE_DIR',     dirname( __FILE__ ) . '/' );
  * "gallery". Please see each individual template for instructions on
  * their intended use. Optional. Defaults to "index".
  *
- * @param     array          $args Attributes for the shortcode.
- * @return    string         unordered list(s) on sucess - empty string on failure.
+ * @param     array     $args Attributes for the shortcode.
+ * @return    string    unordered list(s) on sucess - empty string on failure.
  *
  * @access    private
  * @since     0.1
@@ -254,8 +254,8 @@ add_filter( 'terms_clauses', 'taxonomy_list_shortcode_terms_clauses', 10, 3 );
  *
  * Print a link to edit a given term.
  *
- * @param     stdClass       $term Term Object.
- * @return    string         HTML anchor element.
+ * @param     stdClass  $term Term Object.
+ * @return    string    HTML anchor element.
  *
  * @access    private
  * @since     1.0
@@ -293,7 +293,7 @@ function taxonomy_list_shortcode_edit_term_link( $term ) {
  * function _wp_link_page() defined around line
  * 681 of wp-includes/post-template.php
  *
- * @param      int            $n Page number.
+ * @param      int       $n Page number.
  * @return     string
  *
  * @access     private
