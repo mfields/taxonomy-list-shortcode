@@ -142,8 +142,14 @@ function taxonomy_list_shortcode( $args = array() ) {
 	else {
 		$terms = get_terms( $args['tax'], $term_args );
 	}
+
+#print '<pre>' . print_r( $terms, true ) . '</pre>';
+
 	if ( is_wp_error( $terms ) ) {
-		return '';
+		return 'ERROR TERMS';
+	}
+	if ( empty( $terms ) ) {
+		return 'EMPTY TERMS';
 	}
 	$total = count( $terms );
 
@@ -216,16 +222,19 @@ add_action( 'wp_print_styles', 'taxonomy_list_shortcode_css' );
  * This filter is intended to fire during the 'terms_clauses' hook
  * in the WordPress core function get_terms().
  *
- * @param     array          SQL bits used to create a full term query.
- * @param     array          List of taxonomies to query for.
- * @param     array          Arguments passed to get_terms().
- * @return    array          SQL bits used to create a full term query.
+ * @param     array     $pieces SQL bits used to create a full term query.
+ * @param     array     $taxonomies List of taxonomies to query for.
+ * @param     array     $args Arguments passed to get_terms().
+ * @return    array     SQL bits used to create a full term query.
  *
  * @access    private
  * @since     1.0
  */
 function taxonomy_list_shortcode_terms_clauses( $pieces, $taxonomies, $args ) {
-	if ( isset( $pieces['where'] ) && isset( $args['taxonomy_list_has_description'] ) ) {
+	if ( ! isset( $args['cache_domain'] ) ) {
+		return $pieces;
+	}
+	if ( 'taxonomy_list_shortcode' == $args['cache_domain'] ) {
 		$pieces['where'] .= " AND tt.description != ''";
 	}
 	return $pieces;
@@ -327,8 +336,8 @@ function taxonomy_list_shortcode_paged_taxonomy_link( $n ) {
  * link_text - (string) Text to use inside the link that will appended
  * to the term description. Optional. Defaults to "View entries".
  *
- * @param     mixed     Default value. Not used.
- * @param     array     Named arguments. Please see above for detailed description.
+ * @param     mixed     $default Default value. Not used.
+ * @param     array     $args Named arguments. Please see above for detailed description.
  * @return    string    Term description ready for use in templates with archive link appended.
  *
  * @access    private
@@ -340,14 +349,14 @@ function taxonomy_list_shortcode_term_description( $default, $args = array() ) {
 		'before'    => '',
 		'after'     => '',
 		'link_text' => __( 'View entries', 'taxonomy-list' )
-		) );
+	) );
 
 	if ( ! isset( $args['term']->taxonomy ) || ! isset( $args['term']->description ) ) {
-		return '1234';
+		return '';
 	}
 
 	if ( empty( $args['term']->description ) ) {
-		return '5678';
+		return '';
 	}
 
 	$args['term']->description .= ' <a class="term-archive-link" href="' . esc_url( get_term_link( $args['term'], $args['term']->taxonomy ) ) . '">' . esc_html( $args['link_text'] ) . '</a>';
@@ -360,7 +369,7 @@ add_filter( 'taxonomy-list-term-description', 'taxonomy_list_shortcode_term_desc
 /**
  * Is a given string a color formatted in hexidecimal notation?
  *
- * @param     string    Color in hexidecimal notation. "#" may or may not be prepended to the string.
+ * @param     string    $hex Color in hexidecimal notation. "#" may or may not be prepended to the string.
  * @return    bool
  *
  * @access    private
@@ -384,8 +393,8 @@ function taxonomy_list_shortcode_validate_hex( $hex ) {
 /**
  * Sanitize a color represented in hexidecimal notation.
  *
- * @param     string    Unknown value to sanitize.
- * @param     string    The value that this function should return if it cannot be recognized as a color.
+ * @param     string    $hex Unknown value to sanitize.
+ * @param     string    $default The value that this function should return if $hex is not a color.
  * @return    string    $hex if valid, $default if not.
  *
  * @access    private
