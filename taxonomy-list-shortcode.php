@@ -192,32 +192,6 @@ add_shortcode( 'taxonomy-list', 'taxonomy_list_shortcode' );
 
 
 /**
- * Reset Cache Key
- *
- * In case where get_terms() has been called before this shortcode
- * is called with the same arguments AND the requested template
- * is the definition list, we need to force the cache key to have
- * a unique value so that the query will be executed. Requesting
- * the definition list template triggers a custom clause to be
- * defined in taxonomy_list_shortcode_terms_clauses().
- *
- * @access    private
- * @since     1.1
- */
-function taxonomy_list_shortcode_reset_cache_key( $args ) {
-	if ( isset( $args['taxonomy_list_has_description'] ) ) {
-		wp_cache_set( 'last_changed', time() . '-description-only', 'terms' );
-	}
-	else {
-		wp_cache_set( 'last_changed', time(), 'terms' );
-	}
-
-	return $args;
-}
-add_filter( 'get_terms_args', 'taxonomy_list_shortcode_reset_cache_key' );
-
-
-/**
  * Custom Styles
  *
  * Adds custom stylesheet to public views.
