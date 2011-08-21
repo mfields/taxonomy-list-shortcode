@@ -197,12 +197,13 @@ add_shortcode( 'taxonomy-list', 'taxonomy_list_shortcode' );
  * Custom Styles
  *
  * Adds custom stylesheet to public views.
- * Themes can suppress styles by defining a constant named
- * TAXONOMY_LIST_SHORTCODE_NO_STYLES in functions.php.
+ * Themes can suppress styles by filtering
+ * 'taxonomy-list-shortcode-print-styles'
+ * to return false.
  *
  * @access     private
  * @since      unknown
- * @alter      2011-05-18
+ * @alter      2011-08-21
  */
 function taxonomy_list_shortcode_css() {
 	$print_styles = (bool) apply_filters( 'taxonomy-list-shortcode-print-styles', true );
