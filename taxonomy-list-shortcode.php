@@ -107,15 +107,11 @@ function taxonomy_list_shortcode( $args = array() ) {
 	$args['background'] = taxonomy_list_shortcode_sanitize_hex( $args['background'], $defaults['background'] );
 
 	/*
-	 * Pass a custom value of 'taxonomy_list_has_description' get_terms().
-	 * This value will be used to flag definition-list requests.
-	 * When a definition-list is requested, it is important to only
-	 * display terms that have descriptions. Please see
-	 * taxonomy_list_shortcode_terms_clauses()
-	 * defined in this file.
+	 * Pass a custom cache domain to get_terms().
+	 * Only needed for the definition list template.
 	 */
 	if ( 'definition-list' == $args['template'] ) {
-		$term_args['taxonomy_list_has_description'] = true;
+		$term_args['cache_domain'] = 'taxonomy_list_shortcode';
 	}
 
 	/*
