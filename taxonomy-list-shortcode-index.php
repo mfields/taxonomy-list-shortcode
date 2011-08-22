@@ -20,7 +20,7 @@ foreach ( $chunked as $k => $column ) {
 		$style = '';
 		$style.= ( $args['background'] != 'fff' ) ? ' background:#' . $args['background'] . ';' : '';
 		$style.= ( $args['color'] != '000' ) ? ' color:#' . $args['color'] . ';' : '';
-		$style = ( !empty( $style ) ) ? ' style="' . trim( $style ) . '"' : '';
+		$style = ( !empty( $style ) ) ? ' style="' . esc_attr( trim( $style ) ) . '"' : '';
 
 		$class = ( $args['show_counts'] ) ? ' class="has-quantity"' : '';
 		$quantity = ( $args['show_counts'] ) ? ' <span' . $style . ' class="quantity">' . $count . '</span>' : '';
