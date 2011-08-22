@@ -91,7 +91,7 @@ function taxonomy_list_shortcode( $args = array() ) {
 
 	$args = shortcode_atts( $defaults, $args );
 
-	if ( 0 !== strpos( $args['tax'], ',' ) ) {
+	if ( false !== strpos( $args['tax'], ',' ) ) {
 		$args['tax'] = explode( ',', $args['tax'] );
 	}
 
@@ -110,9 +110,8 @@ function taxonomy_list_shortcode( $args = array() ) {
 	 * Pass a custom cache domain to get_terms().
 	 * Only needed for the definition list template.
 	 */
-	$term_args['cache_domain'] = 'taxonomy_list_shortcode';
-	if ( in_array( $args['template'], array( 'index', 'definition-list', 'gallery' ) ) ) {
-		$term_args['cache_domain'] .= '-' . $args['template'];
+	if ( 'definition-list' == $args['template'] ) {
+		$term_args['cache_domain'] = 'taxonomy_list_shortcode-' . $args['template'];
 	}
 
 	/*
@@ -148,15 +147,11 @@ function taxonomy_list_shortcode( $args = array() ) {
 		$terms = get_terms( $args['tax'], $term_args );
 	}
 
-#print '<pre>' . print_r( $terms, true ) . '</pre>';
-print '<pre>' . print_r( count( $terms ), true ) . '</pre>';
-#print '<pre>' . print_r( $term_args, true ) . '</pre>';
-
 	if ( is_wp_error( $terms ) ) {
-		return 'ERROR TERMS';
+		return '';
 	}
 	if ( empty( $terms ) ) {
-		return 'EMPTY TERMS';
+		return '';
 	}
 	$total = count( $terms );
 
