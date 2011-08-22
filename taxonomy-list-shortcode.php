@@ -68,7 +68,8 @@ function taxonomy_list_shortcode( $args = array() ) {
 	$term_args = array(
 		'hide_empty' => true,
 		'pad_counts' => true,
-		);
+	);
+
 	$defaults = array(
 
 		/* Global arguments. */
@@ -87,9 +88,10 @@ function taxonomy_list_shortcode( $args = array() ) {
 		'captiontag'  => 'dd',
 		'itemtag'     => 'dl',
 		'icontag'     => 'dt',
-		);
+	);
 
 	$args = shortcode_atts( $defaults, $args );
+	extract( $args );
 
 	if ( false !== strpos( $args['tax'], ',' ) ) {
 		$args['tax'] = explode( ',', $args['tax'] );
@@ -177,17 +179,21 @@ function taxonomy_list_shortcode( $args = array() ) {
 		}
 	}
 
-	/* Include template. */
-	if ( in_array( $args['template'], array( 'index', 'definition-list', 'gallery' ) ) ) {
-		$template_name = 'taxonomy-list-shortcode-' . $args['template'] . '.php';
-		$template = locate_template( $template_name );
-		if ( ! empty( $template ) ) {
-			include $template;
-		}
-		else {
-			include TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
-		}
+	/*
+	 * Include template.
+	 */
+	if ( ! in_array( $args['template'], array( 'index', 'definition-list', 'gallery' ) ) ) {
+		return '';
 	}
+
+	$template_name = 'taxonomy-list-shortcode-' . $args['template'] . '.php';
+
+	$path = locate_template( $template_name );
+	if ( empty( $path ) ) {
+		$path = TAXONOMY_LIST_SHORTCODE_DIR . $template_name;
+	}
+
+	include $path;
 
 	/* Print output. */
 	return $o;
