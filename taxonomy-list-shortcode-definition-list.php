@@ -35,11 +35,10 @@ $o.= "\n\n\n" . '<div class="taxonomy-list-definition-list">';
 $o.= "\n" . '<dl>';
 foreach ( (array) $terms as $term ) {
 	$o.= "\n" . '<dt id="' . esc_attr( $term->slug ) . '" class="term-name">' . esc_html( $term->name ) . taxonomy_list_shortcode_edit_term_link( $term ) . '</dt>';
-	$o.= apply_filters( 'taxonomy-list-term-description', '', array(
-		'term'   => $term,
-		'before' => '<dd class="term-description">',
-		'after'  => '</dd>',
-	) );
+
+	$description = $term->description . ' <a class="term-archive-link" href="' . esc_url( get_term_link( $term, $term->taxonomy ) ) . '">' . esc_html__( 'View all entries', 'taxonomy-list' ) . '</a>';
+
+	$o .= '<dd class="term-description">' . sanitize_term_field( 'description', $description, $term->term_id, $term->taxonomy, 'display' ) . '</dd>';
 }
 $o.= "\n" . '</dl>';
 $o.= "\n" . '</div>';
